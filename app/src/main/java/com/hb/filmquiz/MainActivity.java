@@ -1,8 +1,10 @@
 package com.hb.filmquiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
     private List<Question> questions = new ArrayList<Question>();
     private int indexQuestion = 0;
     private int score = 0;
+    private final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+    private static final String KEY_SCORE = "score";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d(TAG, "onCreate() called");
         // on récupère les éléments du layout
         tvQuestion = findViewById(R.id.tvQuestion);
         tvScore = findViewById(R.id.tvScore);
@@ -43,10 +49,22 @@ public class MainActivity extends AppCompatActivity {
         questions.add(new Question(getString(R.string.question_reservoir_dogs), true));
         questions.add(new Question(getString(R.string.question_citizen_kane), false));
 
+        if (savedInstanceState != null) {
+            indexQuestion = savedInstanceState.getInt(KEY_INDEX);
+            score = savedInstanceState.getInt(KEY_SCORE);
+        }
+
         tvQuestion.setText(questions.get(indexQuestion).getText());
         tvScore.setText(getString(R.string.score).concat(": " + score));
 
         btnRestart.setVisibility(View.GONE);
+
+        if(indexQuestion == questions.size()-1){
+            btnRestart.setVisibility(View.VISIBLE);
+            btnFalse.setVisibility(View.GONE);
+            btnTrue.setVisibility(View.GONE);
+            tvQuestion.setVisibility(View.GONE);
+        }
 
         btnTrue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     btnRestart.setVisibility(View.VISIBLE);
                     btnFalse.setVisibility(View.GONE);
                     btnTrue.setVisibility(View.GONE);
+                    tvQuestion.setVisibility(View.GONE);
                 }
             }
         });
@@ -92,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     btnRestart.setVisibility(View.VISIBLE);
                     btnFalse.setVisibility(View.GONE);
                     btnTrue.setVisibility(View.GONE);
+                    tvQuestion.setVisibility(View.GONE);
                 }
             }
         });
@@ -106,7 +126,58 @@ public class MainActivity extends AppCompatActivity {
                 btnRestart.setVisibility(View.GONE);
                 btnFalse.setVisibility(View.VISIBLE);
                 btnTrue.setVisibility(View.VISIBLE);
+                tvQuestion.setVisibility(View.VISIBLE);
+
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart() called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.d(TAG, "onStop() called");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d(TAG, "onDestroy() called");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        Log.d(TAG, "onRestart() called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "onPause() called");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState() called");
+
+        if (btnRestart.getVisibility() == View.VISIBLE) {
+                    outState.putInt(KEY_INDEX, questions.size()-1);
+        }else {
+            outState.putInt(KEY_INDEX, indexQuestion);
+
+        }
+        outState.putInt(KEY_SCORE, score);
     }
 }
