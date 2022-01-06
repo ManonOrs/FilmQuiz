@@ -3,8 +3,11 @@ package com.hb.filmquiz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
     private static final String KEY_SCORE = "score";
+    public static final String KEY_QUESTION = "question";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnRestart.setVisibility(View.GONE);
 
-        if(indexQuestion == questions.size()-1){
+        if (indexQuestion == questions.size() - 1) {
             btnRestart.setVisibility(View.VISIBLE);
             btnFalse.setVisibility(View.GONE);
             btnTrue.setVisibility(View.GONE);
@@ -173,11 +177,30 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onSaveInstanceState() called");
 
         if (btnRestart.getVisibility() == View.VISIBLE) {
-                    outState.putInt(KEY_INDEX, questions.size()-1);
-        }else {
+            outState.putInt(KEY_INDEX, questions.size() - 1);
+        } else {
             outState.putInt(KEY_INDEX, indexQuestion);
 
         }
         outState.putInt(KEY_SCORE, score);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.cheat:
+
+                Intent intent = new Intent(getApplicationContext(), CheatActivity.class);
+                intent.putExtra(KEY_QUESTION, questions.get(indexQuestion));
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
